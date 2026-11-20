@@ -134,27 +134,22 @@ export default function Hero({ lang }: { lang: Lang }) {
                   <Sparkles className="w-4 h-4 text-[#00D2FF] shrink-0" />
                 </div>
 
-                {/* Mini Flagship Covers Grid */}
-                <div className="grid grid-cols-2 gap-2.5">
-                  {[
-                    { name: 'Forza Horizon 6', tag: '2026', grad: 'from-cyan-500/35 to-blue-950' },
-                    { name: 'Spider-Man 2', tag: 'AAA', grad: 'from-red-600/35 to-blue-950' },
-                    { name: 'Black Myth: Wukong', tag: 'GOTY', grad: 'from-amber-500/35 to-stone-950' },
-                    { name: 'Death Stranding 2', tag: '2026', grad: 'from-sky-500/35 to-slate-950' },
-                  ].map((item) => (
-                    <div
-                      key={item.name}
-                      className={`p-3 rounded-xl bg-gradient-to-br ${item.grad} border border-white/10`}
-                    >
-                      <div className="flex items-center justify-between mb-3">
-                        <Gamepad2 className="w-4 h-4 text-white/75" />
-                        <span className="px-1.5 py-0.5 rounded bg-black/50 text-[#00D2FF] text-[10px] font-extrabold">
-                          {item.tag}
-                        </span>
-                      </div>
-                      <p className="text-white font-bold text-xs leading-snug">{item.name}</p>
-                    </div>
-                  ))}
+                {/* Real Cropped Steam Library Preview */}
+                <div className="rounded-xl overflow-hidden border border-white/15 bg-[#090D16] relative">
+                  <img
+                    src="/media/library-1.jpg"
+                    alt="Official Steam Library — +300 AAA Games"
+                    className="w-full aspect-[16/9] object-cover"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#090D16] via-[#090D16]/60 to-transparent px-3 py-2 flex items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-white">
+                      <Gamepad2 className="w-3.5 h-3.5 text-[#00D2FF]" />
+                      Forza Horizon 6 • Halo • Death Stranding 2
+                    </span>
+                    <span className="px-2 py-0.5 rounded bg-emerald-500/25 border border-emerald-400/40 text-emerald-300 text-[10px] font-extrabold">
+                      2026
+                    </span>
+                  </div>
                 </div>
 
                 {/* Stats Strip */}

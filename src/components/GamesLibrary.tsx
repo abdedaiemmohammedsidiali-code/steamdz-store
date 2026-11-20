@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Search, Gamepad2, Sparkles, Monitor } from 'lucide-react';
+import { Search, Gamepad2, Sparkles, Monitor, X, ZoomIn } from 'lucide-react';
 import {
   FLAGSHIP_GAMES,
   LIBRARY_SCREENSHOTS,
@@ -13,6 +13,7 @@ export default function GamesLibrary({ lang }: { lang: Lang }) {
   const t = translations[lang].games;
   const [activeCategory, setActiveCategory] = useState<GameCategory>('all');
   const [query, setQuery] = useState('');
+  const [lightboxShot, setLightboxShot] = useState<{ src: string; label: string } | null>(null);
 
   const filteredGames = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -154,34 +155,78 @@ export default function GamesLibrary({ lang }: { lang: Lang }) {
               const label =
                 lang === 'ar' ? shot.labelAr : lang === 'fr' ? shot.labelFr : shot.labelEn;
               return (
-                <div
+                <button
                   key={shot.id}
-                  className="snap-start shrink-0 w-[280px] sm:w-[360px] rounded-2xl overflow-hidden bg-white/5 border border-white/10 backdrop-blur-md"
+                  type="button"
+                  onClick={() =>
+                    shot.imageUrl && setLightboxShot({ src: shot.imageUrl, label })
+                  }
+                  className="group text-start snap-start shrink-0 w-[290px] sm:w-[400px] rounded-2xl overflow-hidden bg-white/5 border border-white/15 hover:border-[#00D2FF]/60 backdrop-blur-md transition-all"
                 >
-                  <div className="aspect-[16/9] bg-gradient-to-br from-[#0D172A] via-[#111827] to-[#090D16] flex items-center justify-center p-5 relative">
+                  <div className="aspect-[16/9] bg-gradient-to-br from-[#0D172A] via-[#111827] to-[#090D16] flex items-center justify-center relative overflow-hidden">
                     {shot.imageUrl ? (
-                      <img
-                        src={shot.imageUrl}
-                        alt={label}
-                        loading="lazy"
-                        className="w-full h-full object-cover"
-                      />
+                      <>
+                        <img
+                          src={shot.imageUrl}
+                          alt={label}
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                          <span className="opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/75 border border-white/20 text-white text-xs font-bold">
+                            <ZoomIn className="w-3.5 h-3.5 text-[#00D2FF]" />
+                            {lang === 'ar' ? 'تكبير' : lang === 'fr' ? 'Agrandir' : 'Zoom'}
+                          </span>
+                        </div>
+                      </>
                     ) : (
-                      <div className="text-center">
+                      <div className="text-center p-5">
                         <Monitor className="w-9 h-9 text-[#00D2FF]/45 mx-auto mb-2" />
                         <p className="text-gray-300 text-xs font-semibold">{label}</p>
                       </div>
                     )}
                   </div>
-                  <div className="px-4 py-2.5 bg-[#090D16]/80 border-t border-white/10">
-                    <p className="text-gray-300 text-xs font-semibold truncate">{label}</p>
+                  <div className="px-4 py-2.5 bg-[#090D16]/90 border-t border-white/10">
+                    <p className="text-gray-200 text-xs font-semibold truncate">{label}</p>
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>
         </div>
       </div>
+
+      {/* Fullscreen Screenshot Lightbox */}
+      {lightboxShot && (
+        <div
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6"
+          onClick={() => setLightboxShot(null)}
+        >
+          <div
+            className="relative max-w-5xl w-full bg-[#0D1322] rounded-2xl border border-white/15 overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-white/10">
+              <p className="text-white text-xs sm:text-sm font-bold truncate">
+                {lightboxShot.label}
+              </p>
+              <button
+                type="button"
+                onClick={() => setLightboxShot(null)}
+                className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white shrink-0"
+                aria-label="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <img
+              src={lightboxShot.src}
+              alt={lightboxShot.label}
+              className="w-full h-auto max-h-[82vh] object-contain bg-[#090D16]"
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 }
