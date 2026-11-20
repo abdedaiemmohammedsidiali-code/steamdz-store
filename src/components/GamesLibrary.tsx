@@ -81,15 +81,18 @@ export default function GamesLibrary({ lang }: { lang: Lang }) {
                 key={game.id}
                 className="group relative rounded-2xl overflow-hidden bg-[#111827] border border-white/10 hover:border-[#00D2FF]/50 transition-all hover:-translate-y-1 shadow-lg"
               >
-                {/* Cover Art Area */}
+                {/* Cover Art Area (Exact Steam 460x215 header aspect ratio) */}
                 <div
-                  className={`relative aspect-[16/10] bg-gradient-to-br ${game.gradient} p-3 flex flex-col justify-between overflow-hidden`}
+                  className={`relative aspect-[460/215] bg-gradient-to-br ${game.gradient} p-2.5 flex flex-col justify-between overflow-hidden`}
                 >
                   {game.imageUrl ? (
                     <img
                       src={game.imageUrl}
                       alt={game.title}
                       loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
                       className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
@@ -100,19 +103,13 @@ export default function GamesLibrary({ lang }: { lang: Lang }) {
                   )}
 
                   <div className="relative flex items-center justify-between gap-2 z-10">
-                    <span className="px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-sm border border-white/15 text-[10px] font-extrabold text-[#00D2FF]">
+                    <span className="px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm border border-white/15 text-[10px] font-extrabold text-[#00D2FF]">
                       {game.badge}
                     </span>
-                    <span className="text-[10px] font-bold text-white/75 bg-black/45 px-2 py-0.5 rounded-md">
+                    <span className="text-[10px] font-bold text-white/90 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded-md">
                       Steam PC
                     </span>
                   </div>
-
-                  {!game.imageUrl && (
-                    <div className="relative z-10 flex items-center justify-center my-auto">
-                      <Gamepad2 className="w-8 h-8 text-white/25 group-hover:text-white/45 transition-colors" />
-                    </div>
-                  )}
                 </div>
 
                 {/* Title Footer */}
