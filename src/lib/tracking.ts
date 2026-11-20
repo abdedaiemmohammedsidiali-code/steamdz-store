@@ -20,21 +20,30 @@ declare global {
 }
 
 /**
- * Optional webhook hook ready for n8n, Google Sheets Apps Script, or Supabase Edge Functions.
- * Set `config.orderWebhookUrl` in `src/config.ts` to activate.
+ * Sends every submitted order to the Vercel `/api/orders` serverless function,
+ * which forwards it in real time to your Google Sheet (avoiding browser CORS issues).
+ * Optionally also posts to `config.orderWebhookUrl` if set.
  */
 export async function sendOrderToWebhook(orderData: OrderSubmission): Promise<void> {
-  if (!config.orderWebhookUrl) return;
-  try {
-    await fetch(config.orderWebhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData),
-      keepalive: true,
-    });
-  } catch (err) {
-    console.error('Order webhook error:', err);
+  const endpoints = ['/api/orders'];
+  if (config.orderWebhookUrl) {
+    endpoints.push(config.orderWebhookUrl);
   }
+
+  await Promise.allSettled(
+    endpoints.map(async (url) => {
+      try {
+        await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData),
+          keepalive: true,
+        });
+      } catch (err) {
+        console.error(`Order webhook error (${url}):`, err);
+      }
+    })
+  );
 }
 
 /**
